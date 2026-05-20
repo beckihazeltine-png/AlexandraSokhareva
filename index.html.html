@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Александра Сохарева | SMM & Контент-креатор</title>
+    <meta name="description" content="SMM & контент-креатор для офлайн-бизнеса. Создаю визуальный опыт, который пробивает баннерную слепоту.">
+    
+    <!-- Подключение шрифтов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgBase: '#020611',
+                        bgDarker: '#0B1324',
+                        textMain: '#FBF9F6', /* Теперь основной текст белый */
+                        accentGold: '#F7A052', /* Яркий оранжевый из референса */
+                        accentRose: '#D9A796',
+                        error: '#E53E3E'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020611;
+            color: #FBF9F6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        /* Плавное проявление контента */
+        .fade-in-up {
+            animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020611;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F7A052;
+            border-radius: 4px;
+        }
+        
+        /* Стилизация круглых чекбоксов */
+        .custom-checkbox:checked + div {
+            background-color: #F7A052;
+            border-color: #F7A052;
+        }
+        .custom-checkbox:checked + div svg {
+            display: block;
+        }
+        
+        /* Убираем стрелки у number input */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Анимированные жидкие УТП-карты */
+        .usp-blob {
+            transition: border-radius 1.4s cubic-bezier(0.19, 1, 0.22, 1), 
+                        transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), 
+                        box-shadow 1.2s cubic-bezier(0.19, 1, 0.22, 1), 
+                        border-color 0.8s ease;
+            will-change: border-radius, transform;
+        }
+        
+        /* При наведении форма карты плавно перетекает в другое органическое состояние */
+        @media (min-width: 768px) {
+            .usp-blob-1:hover {
+                border-radius: 45% 55% 40% 60% / 50% 45% 55% 50% !important;
+                transform: translateY(-2rem) scale(1.03);
+            }
+            .usp-blob-2:hover {
+                border-radius: 60% 40% 55% 45% / 40% 50% 50% 60% !important;
+                transform: translateY(2.5rem) scale(1.03);
+            }
+            .usp-blob-3:hover {
+                border-radius: 40% 60% 50% 50% / 55% 40% 60% 45% !important;
+                transform: translateY(-1rem) scale(1.03);
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-textMain min-h-screen flex flex-col relative">
+
+    <!-- Интерактивный Canvas Фон -->
+    <!-- scale-125 и blur создают эффект переливающейся сетки (mesh gradient) -->
+    <canvas id="liquid-canvas" class="fixed inset-0 w-full h-full -z-20 object-cover pointer-events-none blur-[60px] md:blur-[100px] scale-[1.2] opacity-90"></canvas>
+
+    <!-- Навигация (Glassmorphism) -->
+    <header class="fixed w-full top-0 z-50 transition-all duration-300 pointer-events-none" id="header">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-6 flex justify-between items-center text-white [text-shadow:_0_1px_10px_rgb(0_0_0_/_20%)]">
+            <!-- Logo -->
+            <a href="#home" class="font-serif text-xl md:text-2xl tracking-wider pointer-events-auto hover:text-accentGold transition-colors">А.С.</a>
+            
+            <!-- Desktop Menu (Floating Dock) -->
+            <nav class="hidden lg:flex items-center gap-8 pointer-events-auto bg-white/5 backdrop-blur-xl border border-white/10 px-8 py-3 rounded-full shadow-lg">
+                <a href="#home" class="text-xs uppercase tracking-widest text-white/80 hover:text-accentGold transition-colors font-medium">Главная</a>
+                <a href="#about" class="text-xs uppercase tracking-widest text-white/80 hover:text-accentGold transition-colors font-medium">Преимущества</a>
+                <a href="#services" class="text-xs uppercase tracking-widest text-white/80 hover:text-accentGold transition-colors font-medium">Услуги</a>
+                <a href="#portfolio" class="text-xs uppercase tracking-widest text-white/80 hover:text-accentGold transition-colors font-medium">Портфолио</a>
+                <a href="#contact" class="text-xs uppercase tracking-widest text-white/80 hover:text-accentGold transition-colors font-medium">Контакты</a>
+            </nav>
+
+            <!-- Right Block: Phone, Socials & Contact CTA -->
+            <div class="hidden lg:flex items-center gap-6 pointer-events-auto">
+                <a href="tel:+79994569835" class="flex items-center gap-2 text-sm text-white/90 hover:text-accentGold transition-colors font-medium">
+                    <!-- Phone Icon -->
+                    <svg class="w-4 h-4 text-accentGold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    +7 (999) 456 98-35
+                </a>
+                
+                <div class="flex items-center gap-3">
+                    <a href="https://t.me/alexandrasokhareva" target="_blank" aria-label="Telegram" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/15 transition-all border border-white/10 hover:border-accentGold/50">
+                        <!-- Telegram Icon -->
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.9 2.1L2 9.1c-1 .3-1 1-.2 1.3l5.1 1.6 1.9 5.8c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.7-2.6 5.6 4.1c1 .6 1.7.3 2-1l3.6-17c.4-1.6-.6-2.3-1.6-1.5zM8.9 11.5l8.6-5.4-7.2 6.5-.4 2.8-.8-3.4" />
+                        </svg>
+                    </a>
+                    <a href="https://vk.com/alexandrasokhareva" target="_blank" aria-label="VK" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/15 transition-all border border-white/10 hover:border-accentGold/50">
+                        <!-- VK Icon -->
+                        <svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                            <path d="M15.9 2H8.1C4.7 2 2 4.7 2 8.1v7.8C2 19.3 4.7 22 8.1 22h7.8c3.4 0 6.1-2.7 6.1-6.1V8.1C22 4.7 19.3 2 15.9 2zm2.6 12.2c0 .3-.1.6-.3.8-.2.2-.5.3-.8.3h-1.1c-.4 0-.8-.1-1.1-.4-.3-.3-.5-.7-.8-1.1-.3-.4-.6-.8-.9-.8-.2 0-.3.1-.4.2-.1.1-.2.3-.2.5v1.1c0 .3-.1.6-.3.8-.2.2-.5.3-.8.3h-1.4c-.9 0-1.8-.3-2.5-.9-.7-.6-1.2-1.4-1.6-2.3-.4-.9-.7-1.8-1-2.8-.1-.3 0-.6.2-.8s.5-.3.8-.3h1.1c.3 0 .5.1.7.3.2.2.3.4.4.7.2.5.4 1 .7 1.4.2.3.4.5.6.6.1 0 .2 0 .3-.1.1-.1.1-.2.1-.4V9.8c0-.4-.1-.7-.3-.9-.2-.2-.5-.3-.9-.3h-.2c-.1 0-.1-.1 0-.2.1-.2.3-.3.6-.3h1.8c.3 0 .5.1.7.3.2.2.3.5.3.9v2.2c0 .2 0 .4.1.5.1.1.2.1.3.1s.2-.1.3-.2c.3-.4.6-.9.8-1.4.1-.3.3-.6.4-.9.1-.2.2-.4.4-.5.2-.1.4-.2.7-.2h1.1c.3 0 .6.1.7.3s.1.5 0 .8c-.2.5-.5 1-1 1.4-.3.3-.5.5-.5.6 0 .1.1.2.2.3.2.2.5.5.8.8.4.4.8.9 1.1 1.4.2.3.2.6.2.8z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hamburger Button (Mobile) -->
+            <button id="mobile-menu-toggle" aria-label="Открыть меню" class="lg:hidden pointer-events-auto w-10 h-10 flex flex-col justify-center items-center gap-1.5 bg-white/5 backdrop-blur-md rounded-full border border-white/10 min-h-[44px] min-w-[44px]">
+                <span class="w-5 h-0.5 bg-white transition-transform duration-300" id="burger-line-1"></span>
+                <span class="w-5 h-0.5 bg-white transition-opacity duration-300" id="burger-line-2"></span>
+                <span class="w-5 h-0.5 bg-white transition-transform duration-300" id="burger-line-3"></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Slider -->
+        <div id="mobile-menu" class="hidden lg:hidden fixed inset-0 top-[72px] bg-black/85 backdrop-blur-3xl border-t border-white/5 flex flex-col p-6 space-y-8 z-30 transition-all duration-300 opacity-0 transform -translate-y-4 pointer-events-auto">
+            <nav class="flex flex-col gap-5 text-center">
+                <a href="#home" class="mobile-nav-link text-lg uppercase tracking-widest text-white/95 hover:text-accentGold transition-colors py-2 font-serif">Главная</a>
+                <a href="#about" class="mobile-nav-link text-lg uppercase tracking-widest text-white/95 hover:text-accentGold transition-colors py-2 font-serif">Преимущества</a>
+                <a href="#services" class="mobile-nav-link text-lg uppercase tracking-widest text-white/95 hover:text-accentGold transition-colors py-2 font-serif">Услуги</a>
+                <a href="#portfolio" class="mobile-nav-link text-lg uppercase tracking-widest text-white/95 hover:text-accentGold transition-colors py-2 font-serif">Портфолио</a>
+                <a href="#contact" class="mobile-nav-link text-lg uppercase tracking-widest text-white/95 hover:text-accentGold transition-colors py-2 font-serif">Контакты</a>
+            </nav>
+
+            <div class="border-t border-white/10 my-2"></div>
+
+            <div class="flex flex-col items-center gap-6">
+                <a href="tel:+79994569835" class="flex items-center gap-2 text-lg text-white hover:text-accentGold transition-colors">
+                    <svg class="w-5 h-5 text-accentGold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    +7 (999) 456 98-35
+                </a>
+                
+                <div class="flex gap-4">
+                    <a href="https://t.me/alexandrasokhareva" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 hover:border-accentGold/50 min-h-[44px] min-w-[44px]">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.9 2.1L2 9.1c-1 .3-1 1-.2 1.3l5.1 1.6 1.9 5.8c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.7-2.6 5.6 4.1c1 .6 1.7.3 2-1l3.6-17c.4-1.6-.6-2.3-1.6-1.5zM8.9 11.5l8.6-5.4-7.2 6.5-.4 2.8-.8-3.4" />
+                        </svg>
+                    </a>
+                    <a href="https://vk.com/alexandrasokhareva" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 hover:border-accentGold/50 min-h-[44px] min-w-[44px]">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.9 2H8.1C4.7 2 2 4.7 2 8.1v7.8C2 19.3 4.7 22 8.1 22h7.8c3.4 0 6.1-2.7 6.1-6.1V8.1C22 4.7 19.3 2 15.9 2zm2.6 12.2c0 .3-.1.6-.3.8-.2.2-.5.3-.8.3h-1.1c-.4 0-.8-.1-1.1-.4-.3-.3-.5-.7-.8-1.1-.3-.4-.6-.8-.9-.8-.2 0-.3.1-.4.2-.1.1-.2.3-.2.5v1.1c0 .3-.1.6-.3.8-.2.2-.5.3-.8.3h-1.4c-.9 0-1.8-.3-2.5-.9-.7-.6-1.2-1.4-1.6-2.3-.4-.9-.7-1.8-1-2.8-.1-.3 0-.6.2-.8s.5-.3.8-.3h1.1c.3 0 .5.1.7.3.2.2.3.4.4.7.2.5.4 1 .7 1.4.2.3.4.5.6.6.1 0 .2 0 .3-.1.1-.1.1-.2.1-.4V9.8c0-.4-.1-.7-.3-.9-.2-.2-.5-.3-.9-.3h-.2c-.1 0-.1-.1 0-.2.1-.2.3-.3.6-.3h1.8c.3 0 .5.1.7.3.2.2.3.5.3.9v2.2c0 .2 0 .4.1.5.1.1.2.1.3.1s.2-.1.3-.2c.3-.4.6-.9.8-1.4.1-.3.3-.6.4-.9.1-.2.2-.4.4-.5.2-.1.4-.2.7-.2h1.1c.3 0 .6.1.7.3s.1.5 0 .8c-.2.5-.5 1-1 1.4-.3.3-.5.5-.5.6 0 .1.1.2.2.3.2.2.5.5.8.8.4.4.8.9 1.1 1.4.2.3.2.6.2.8z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Блок 1: Главный экран -->
+        <section id="home" class="min-h-screen flex items-center pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto w-full">
+            <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center w-full">
+                <!-- Левая колонка -->
+                <div class="space-y-8 fade-in-up [text-shadow:_0_2px_15px_rgb(0_0_0_/_30%)]">
+                    <p class="text-[10px] md:text-xs tracking-[0.2em] text-accentGold uppercase font-semibold">Техническое эстетическое решение</p>
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif leading-[1.1] text-white">Александра<br/>Сохарева</h1>
+                    <h2 class="text-base md:text-lg lg:text-xl font-light text-white/90 max-w-lg leading-relaxed">
+                        SMM & контент-креатор для офлайн-бизнеса. Создаю визуальный опыт, который пробивает баннерную слепоту и превращает подписчиков в клиентов.
+                    </h2>
+                    <div class="pt-2">
+                        <a href="#contact" class="inline-flex items-center justify-center bg-white text-[#020611] px-10 py-4 text-sm tracking-wide uppercase hover:bg-accentGold hover:text-white hover:shadow-lg hover:shadow-accentGold/20 transition duration-500 min-h-[44px] rounded-full shadow-md font-medium">
+                            Обсудить проект
+                        </a>
+                    </div>
+                </div>
+                <!-- Правая колонка -->
+                <div class="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden group fade-in-up rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl border border-white/20 bg-white/5 backdrop-blur-sm" style="animation-delay: 0.2s;">
+                    <img src="avatar.jpg" 
+                         alt="Портрет Александры Сохаревой" 
+                         onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000'"
+                         class="object-cover w-full h-full transform transition duration-[1.2s] group-hover:scale-105" loading="lazy" />
+                    <div class="absolute inset-0 bg-white/5 group-hover:bg-transparent transition duration-500"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок УТП: Почему выбирают меня (Асимметричный жидкий макет) -->
+        <section id="about" class="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full relative">
+            <div class="text-center mb-16 md:mb-24">
+                <span class="text-accentGold text-[11px] tracking-[0.3em] uppercase block mb-3">Философия работы</span>
+                <h2 class="text-3xl md:text-4xl font-serif text-white">Уникальный подход к контенту</h2>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch justify-between">
+                
+                <!-- УТП Карточка 1 -->
+                <div class="usp-blob usp-blob-1 group w-full md:w-[31%] p-10 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-accentGold/50 flex flex-col items-center text-center relative overflow-hidden md:-translate-y-6"
+                     style="border-radius: 60% 40% 55% 45% / 40% 50% 50% 60%;">
+                    
+                    <!-- Нежное внутреннее свечение при ховере -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-accentGold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
+                    
+                    <!-- Круглая интерактивная иконка -->
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8 text-accentGold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 2a10 10 0 0 1 8 5l-8 3-4-6" />
+                            <path d="M22 12a10 10 0 0 1-5 8l-3-8 8-2" />
+                            <path d="M12 22a10 10 0 0 1-8-5l8-3 4 6" />
+                            <path d="M2 12a10 10 0 0 1 5-8l3 8-8 2" />
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-serif mb-4 text-white font-medium">Визуальный авторитет</h3>
+                    <p class="text-sm font-light text-white/80 leading-relaxed max-w-xs">
+                        Никакого «мыльного» контента. Разрабатываю и продюсирую премиальную эстетику, которая мгновенно цепляет взгляд искушенного зрителя.
+                    </p>
+                </div>
+
+                <!-- УТП Карточка 2 -->
+                <div class="usp-blob usp-blob-2 group w-full md:w-[31%] p-10 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-accentRose/50 flex flex-col items-center text-center relative overflow-hidden md:translate-y-8"
+                     style="border-radius: 45% 55% 40% 60% / 50% 45% 55% 50%;">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-br from-accentRose/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
+                    
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8 text-accentRose" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                            <path d="M6 3h12l4 6-10 12L2 9z" />
+                            <path d="M11 3 L10 9 L12 21" />
+                            <path d="M13 3 L14 9 L12 21" />
+                            <path d="M2 9h20" />
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-serif mb-4 text-white font-medium">Окупаемый маркетинг</h3>
+                    <p class="text-sm font-light text-white/80 leading-relaxed max-w-xs">
+                        Красота ради конверсий. Органично внедряю смыслы и бизнес-цели в прогревы и трендовые рилсы, генерируя постоянный поток лояльных клиентов.
+                    </p>
+                </div>
+
+                <!-- УТП Карточка 3 -->
+                <div class="usp-blob usp-blob-3 group w-full md:w-[31%] p-10 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-accentGold/50 flex flex-col items-center text-center relative overflow-hidden md:-translate-y-2"
+                     style="border-radius: 50% 50% 35% 65% / 40% 60% 40% 60%;">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-br from-accentGold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
+                    
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8 text-accentGold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                            <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-serif mb-4 text-white font-medium">Полный продакшн</h3>
+                    <p class="text-sm font-light text-white/80 leading-relaxed max-w-xs">
+                        Абсолютное освобождение вашего времени. Закрываю весь цикл задач — от сценариев и кастинга моделей до комьюнити-менеджмента.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Блок 2: Манифест -->
+        <section id="manifest" class="relative overflow-hidden py-24 md:py-32 px-4 md:px-8 my-16">
+            <!-- Усиленная стеклянная подложка -->
+            <div class="absolute inset-0 bg-white/5 backdrop-blur-2xl border border-white/10 -z-10 rounded-[3rem] max-w-7xl mx-auto shadow-2xl"></div>
+            <div class="max-w-4xl mx-auto text-center fade-in-up">
+                <span class="text-accentGold text-[25px] tracking-[0.3em] uppercase block mb-6"> МАНИФЕСТ</span>
+                <p class="text-2xl md:text-3xl lg:text-4xl font-serif leading-snug lg:leading-normal text-white/95 px-4 italic">
+                    «В мире шаблонных рилсов и однообразных постов выигрывает тот, кто умеет вызывать эмоцию. Я создаю контент, на котором палец пользователя замирает. Эстетика бьюти-сферы, флористики и ресторанов — это не просто картинка. Это атмосфера, выраженная через кадр».
+                </p>
+            </div>
+        </section>
+
+        <!-- Блок 3: Услуги и Калькулятор -->
+        <section class="py-24 md:py-32 px-4 md:px-8 max-w-7xl mx-auto" id="services">
+            <div class="mb-16 text-center">
+                <h2 class="text-4xl md:text-5xl font-serif mb-4 text-white">Комплексные услуги</h2>
+                <p class="text-white/60 font-light tracking-wide uppercase text-sm">Форматы сотрудничества</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-20">
+                <!-- Карточка 1 -->
+                <article class="border border-white/10 p-8 md:p-12 hover:border-accentGold/60 transition duration-500 group bg-black/20 backdrop-blur-xl relative overflow-hidden rounded-[2.5rem] hover:shadow-2xl hover:shadow-accentGold/10">
+                    <h3 class="text-2xl font-serif mb-2 text-white">Ведение под ключ</h3>
+                    <div class="text-accentGold font-semibold text-lg mb-1">от 40 000 ₽ / мес</div>
+                    <div class="text-sm text-white/50 mb-8 font-light">Срок работы: от 1 месяца</div>
+                    
+                    <ul class="space-y-4 text-sm md:text-base font-light text-white/85">
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Анализ конкурентов и разработка индивидуальной контент-стратегии.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Ежемесячный сбалансированный контент-план (экспертные посты, интерактивы, Reels).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Полная организация съемочного процесса (написание ТЗ, кастинг, локации).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Профессиональный продакшн (монтаж, цветокоррекция, адаптация под сетку).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Influencer-маркетинг (подбор блогеров, посевы).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Работа с вовлечением аудитории (розыгрыши, геймификация).
+                        </li>
+                    </ul>
+                </article>
+
+                <!-- Карточка 2 -->
+                <article class="border border-white/10 p-8 md:p-12 hover:border-accentGold/60 transition duration-500 group bg-black/20 backdrop-blur-xl relative overflow-hidden rounded-[2.5rem] hover:shadow-2xl hover:shadow-accentGold/10">
+                    <h3 class="text-2xl font-serif mb-2 text-white">Эстетичный продакшн</h3>
+                    <div class="text-accentGold font-semibold text-lg mb-1">от 3 000 ₽ / сессия</div>
+                    <div class="text-sm text-white/50 mb-8 font-light">Срок отдачи: день в день</div>
+                    
+                    <ul class="space-y-4 text-sm md:text-base font-light text-white/85">
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Выездная съемка на профессиональный фотоаппарат (высокое разрешение).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Работа со сложным естественным и искусственным светом.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Детализированная съемка текстур, продукта и атмосферы пространства.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-accentGold mt-1 text-xs">✦</span>
+                            Адаптация готовых материалов под требования веб-сайтов и соцсетей.
+                        </li>
+                    </ul>
+                </article>
+            </div>
+
+            <!-- Интерактивный Калькулятор -->
+            <div class="max-w-2xl mx-auto border border-white/20 p-8 md:p-12 bg-black/20 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl">
+                <h3 class="text-2xl font-serif mb-8 text-center text-white">Рассчитать стоимость проекта</h3>
+                <form id="calculator" class="space-y-8">
+                    
+                    <!-- Блок 1: Основные услуги (Чекбоксы) -->
+                    <div class="space-y-5">
+                        <label class="flex items-center cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" id="calc-smm" class="custom-checkbox opacity-0 absolute h-0 w-0" onchange="updateCalc()">
+                                <div class="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center transition-colors group-hover:border-accentGold">
+                                    <svg class="w-4 h-4 text-white hidden pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                            <span class="ml-4 font-light select-none text-white/80 group-hover:text-white transition-colors">Комплексное ведение под ключ (от 40 000 ₽)</span>
+                        </label>
+
+                        <label class="flex items-center cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" id="calc-pack" class="custom-checkbox opacity-0 absolute h-0 w-0" onchange="updateCalc()">
+                                <div class="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center transition-colors group-hover:border-accentGold">
+                                    <svg class="w-4 h-4 text-white hidden pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                            <span class="ml-4 font-light select-none text-white/80 group-hover:text-white transition-colors">Разовая визуальная упаковка профиля (10 000 ₽)</span>
+                        </label>
+
+                        <label class="flex items-center cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" id="calc-pr" class="custom-checkbox opacity-0 absolute h-0 w-0" onchange="updateCalc()">
+                                <div class="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center transition-colors group-hover:border-accentGold">
+                                    <svg class="w-4 h-4 text-white hidden pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                            <span class="ml-4 font-light select-none text-white/80 group-hover:text-white transition-colors">Закупка рекламы / Работа с блогерами (15 000 ₽)</span>
+                        </label>
+                    </div>
+
+                    <div class="border-t border-white/10"></div>
+
+                    <!-- Блок 2: Продакшн (Счетчики) -->
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <label for="calc-shoots" class="font-light select-none text-white/80">Выездные съемочные сессии (3 000 ₽/шт):</label>
+                            <div class="flex items-center gap-4">
+                                <button type="button" class="w-10 h-10 flex items-center justify-center border border-white/20 hover:bg-white hover:text-[#020611] transition rounded-full text-lg bg-white/5 backdrop-blur-sm" onclick="changeCounter('calc-shoots', -1)">-</button>
+                                <input type="number" id="calc-shoots" value="0" min="0" class="w-12 text-center bg-transparent border-none outline-none font-medium text-lg text-white" onchange="updateCalc()" oninput="updateCalc()">
+                                <button type="button" class="w-10 h-10 flex items-center justify-center border border-white/20 hover:bg-white hover:text-[#020611] transition rounded-full text-lg bg-white/5 backdrop-blur-sm" onclick="changeCounter('calc-shoots', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <label for="calc-reels" class="font-light select-none text-white/80">Сложный монтаж Reels (1 500 ₽/шт):</label>
+                            <div class="flex items-center gap-4">
+                                <button type="button" class="w-10 h-10 flex items-center justify-center border border-white/20 hover:bg-white hover:text-[#020611] transition rounded-full text-lg bg-white/5 backdrop-blur-sm" onclick="changeCounter('calc-reels', -1)">-</button>
+                                <input type="number" id="calc-reels" value="0" min="0" class="w-12 text-center bg-transparent border-none outline-none font-medium text-lg text-white" onchange="updateCalc()" oninput="updateCalc()">
+                                <button type="button" class="w-10 h-10 flex items-center justify-center border border-white/20 hover:bg-white hover:text-[#020611] transition rounded-full text-lg bg-white/5 backdrop-blur-sm" onclick="changeCounter('calc-reels', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Итог -->
+                    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
+                        <span class="text-sm uppercase tracking-widest text-white/50">Ориентировочно:</span>
+                        <span class="text-4xl md:text-5xl font-serif text-accentGold font-medium" id="calc-total">0 ₽</span>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Блок 4: Портфолио (С постоянной видимостью информации) -->
+        <section class="py-24 px-4 md:px-8 max-w-7xl mx-auto" id="portfolio">
+            <div class="mb-16 md:flex justify-between items-end">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-serif mb-4 text-white">Кейсы & Работы</h2>
+                    <p class="text-white/60 font-light max-w-md text-sm">Проекты, где эстетика встретилась с результативностью. Нажмите, чтобы увидеть детали.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Кейс 1 -->
+                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-white/5 rounded-[2.5rem] shadow-2xl border border-white/10" onclick="openModal(0)">
+                    <img src="vika.jpg" alt="Мастерская платьев" class="object-cover w-full h-full transition duration-1000 group-hover:scale-105" loading="lazy">
+                    <!-- Оверлей постоянно видимый с мягким переходом контрастности на ховере -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-8 transition-all duration-500 group-hover:from-black/100 group-hover:via-black/50">
+                        <div class="text-white flex flex-col justify-end h-[160px]">
+                            <p class="text-xs tracking-widest uppercase text-accentGold mb-2 font-medium">Мода</p>
+                            <div class="h-16 flex items-start">
+                                <h3 class="text-2xl font-serif text-white leading-tight">Авторская мастерская платьев</h3>
+                            </div>
+                            <p class="text-sm font-light text-white/80 flex items-center gap-1 group-hover:text-accentGold transition-colors duration-300 mt-auto">
+                                Узнать результаты <span class="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">↗</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 2 -->
+                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-white/5 rounded-[2.5rem] shadow-2xl border border-white/10" onclick="openModal(1)">
+                    <img src="trava.jpg" alt="Цветочный магазин ТРАВА" class="object-cover w-full h-full transition duration-1000 group-hover:scale-105" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-8 transition-all duration-500 group-hover:from-black/100 group-hover:via-black/50">
+                        <div class="text-white flex flex-col justify-end h-[160px]">
+                            <p class="text-xs tracking-widest uppercase text-accentGold mb-2 font-medium">Цветы</p>
+                            <div class="h-16 flex items-start">
+                                <h3 class="text-2xl font-serif text-white leading-tight">Магазин «ТРАВА»</h3>
+                            </div>
+                            <p class="text-sm font-light text-white/80 flex items-center gap-1 group-hover:text-accentGold transition-colors duration-300 mt-auto">
+                                Узнать результаты <span class="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">↗</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 3 -->
+                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-white/5 rounded-[2.5rem] shadow-2xl border border-white/10" onclick="openModal(2)">
+                    <img src="rest.jpg" alt="Ресторанный холдинг" class="object-cover w-full h-full transition duration-1000 group-hover:scale-105" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-8 transition-all duration-500 group-hover:from-black/100 group-hover:via-black/50">
+                        <div class="text-white flex flex-col justify-end h-[160px]">
+                            <p class="text-xs tracking-widest uppercase text-accentGold mb-2 font-medium">HoReCa</p>
+                            <div class="h-16 flex items-start">
+                                <h3 class="text-2xl font-serif text-white leading-tight">Ресторанный холдинг</h3>
+                            </div>
+                            <p class="text-sm font-light text-white/80 flex items-center gap-1 group-hover:text-accentGold transition-colors duration-300 mt-auto">
+                                Узнать результаты <span class="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">↗</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок 5: Контактная зона -->
+        <section class="bg-black/30 backdrop-blur-3xl text-white py-24 md:py-32 px-4 md:px-8 rounded-t-[3rem] md:rounded-t-[4.5rem] relative z-10 border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" id="contact">
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+                <div>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight mb-6">Давайте<br>создавать<br>красиво.</h2>
+                    <p class="font-light text-white/70 max-w-sm">
+                        Заполните форму, и я свяжусь с вами в ближайшее время для обсуждения деталей вашего проекта.
+                    </p>
+                </div>
+                
+                <form id="contactForm" class="space-y-6" onsubmit="handleFormSubmit(event)">
+                    <!-- Поле Имя -->
+                    <div class="relative">
+                        <input type="text" id="name" name="name" required placeholder="Имя *" 
+                               class="w-full bg-white/5 border border-white/20 rounded-full px-8 py-5 text-white font-light focus:outline-none focus:border-accentGold focus:bg-white/10 transition-all placeholder-white/50 min-h-[56px]">
+                        <span class="text-error text-xs absolute -bottom-5 left-8 hidden" id="err-name">Пожалуйста, введите ваше имя</span>
+                    </div>
+
+                    <!-- Поле Проект -->
+                    <div class="relative">
+                        <input type="text" id="project" name="project" placeholder="Проект / Ссылка на соцсеть" 
+                               class="w-full bg-white/5 border border-white/20 rounded-full px-8 py-5 text-white font-light focus:outline-none focus:border-accentGold focus:bg-white/10 transition-all placeholder-white/50 min-h-[56px]">
+                    </div>
+
+                    <!-- Поле Контакт -->
+                    <div class="relative">
+                        <input type="text" id="contactInfo" name="contactInfo" required placeholder="Telegram / WhatsApp *" 
+                               class="w-full bg-white/5 border border-white/20 rounded-full px-8 py-5 text-white font-light focus:outline-none focus:border-accentGold focus:bg-white/10 transition-all placeholder-white/50 min-h-[56px]">
+                        <span class="text-error text-xs absolute -bottom-5 left-8 hidden" id="err-contact">Укажите корректный номер или @username</span>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-white text-[#020611] py-5 uppercase tracking-widest text-sm font-bold hover:bg-accentGold hover:text-white transition duration-300 flex items-center justify-center gap-3 min-h-[56px] rounded-full mt-4 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                        <span>Обсудить проект</span>
+                        <!-- Спиннер загрузки -->
+                        <svg id="spinner" class="animate-spin hidden w-5 h-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                    
+                    <div id="successMsg" class="hidden text-accentGold text-center font-light mt-4">
+                        Спасибо! Заявка успешно отправлена.
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black text-white/40 py-8 text-center text-xs font-light tracking-wider relative z-10 border-t border-white/5">
+        <p>© 2026 Александра Сохарева. Все права защищены.</p>
+    </footer>
+
+    <!-- Модальное окно для кейсов -->
+    <div id="caseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-[#0B1324] w-full max-w-4xl flex flex-col md:flex-row relative transform scale-95 transition-transform duration-300 shadow-2xl rounded-[2.5rem] overflow-hidden border border-white/10" id="modalContentBlock">
+            
+            <button onclick="closeModal()" class="absolute right-4 top-4 z-20 w-10 h-10 flex items-center justify-center text-white/50 hover:text-white bg-black/40 hover:bg-white/10 rounded-full transition-colors min-h-[44px] min-w-[44px]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            
+            <div id="sliderContainer" class="w-full md:w-1/2 aspect-square md:aspect-auto relative group/slider bg-black/40 min-h-[350px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none">
+    <img id="modalImg" src="" alt="Кейс" draggable="false" class="w-full h-full object-cover absolute inset-0 transition-all duration-500 pointer-events-none">
+                
+                <button onclick="prevSlide()" class="absolute left-4 z-10 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/30 hover:bg-accentGold rounded-full transition-all opacity-100 md:opacity-0 md:group-hover/slider:opacity-100 min-h-[44px] min-w-[44px]">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                
+                <button onclick="nextSlide()" class="absolute right-4 z-10 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/30 hover:bg-accentGold rounded-full transition-all opacity-100 md:opacity-0 md:group-hover/slider:opacity-100 min-h-[44px] min-w-[44px]">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
+                <div id="modalDots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10"></div>
+            </div>
+            
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-transparent relative z-10">
+                <p id="modalCategory" class="text-xs tracking-widest uppercase text-accentGold mb-4"></p>
+                <h3 id="modalTitle" class="text-3xl font-serif mb-6 text-white leading-tight"></h3>
+                
+                <div class="space-y-6 text-sm font-light text-white/80">
+                    <div>
+                        <strong class="font-medium text-white block mb-1">Ниша:</strong>
+                        <span id="modalNiche"></span>
+                    </div>
+                    <div>
+                        <strong class="font-medium text-white block mb-1">Задача:</strong>
+                        <span id="modalTask"></span>
+                    </div>
+                    <div class="p-4 bg-white/5 backdrop-blur-md rounded-[1.5rem] border-l-4 border-accentGold">
+                        <strong class="font-medium text-white block mb-1">Результат:</strong>
+                        <span id="modalResult" class="font-serif text-lg leading-snug"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Скрипты для логики и физики фона -->
+    <script>
+        /* =========================================
+           ФИЗИЧЕСКИЙ АНИМИРОВАННЫЙ ФОН (CANVAS)
+           ========================================= */
+        const canvas = document.getElementById('liquid-canvas');
+        const ctx = canvas.getContext('2d');
+        let scale = 0.5; // Отрисовка в половинном разрешении для максимальной производительности (blur сглаживает)
+        let width, height;
+        let orbs = [];
+        let time = 0; // Для органичного плавания
+
+        function initCanvas() {
+            width = window.innerWidth * scale;
+            height = window.innerHeight * scale;
+            canvas.width = width;
+            canvas.height = height;
+
+            // Задаем базовые "якоря" (baseX, baseY), чтобы пятна всегда возвращались на свои места
+            orbs = [
+                { baseX: width*0.3, baseY: height*0.2, x: width*0.3, y: height*0.2, vx: 0, vy: 0, r: width*0.6, color: [247, 160, 82] },
+                { baseX: width*0.5, baseY: height*0.5, x: width*0.5, y: height*0.5, vx: 0, vy: 0, r: width*0.5, color: [212, 133, 72] },
+                { baseX: width*0.8, baseY: height*0.8, x: width*0.8, y: height*0.8, vx: 0, vy: 0, r: width*0.7, color: [15, 46, 92] },
+                { baseX: width*0.8, baseY: height*0.2, x: width*0.8, y: height*0.2, vx: 0, vy: 0, r: width*0.5, color: [20, 75, 145] },
+                { baseX: width*0.2, baseY: height*0.8, x: width*0.2, y: height*0.2, vx: 0, vy: 0, r: width*0.6, color: [5, 15, 30] }
+            ];
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+
+        let mouse = { x: -1000, y: -1000, active: false };
+        
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX * scale;
+            mouse.y = e.clientY * scale;
+            mouse.active = true;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.active = false;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX * scale;
+            mouse.y = e.touches[0].clientY * scale;
+            mouse.active = true;
+        });
+        window.addEventListener('touchend', () => {
+            mouse.active = false;
+        });
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#020611';
+            ctx.fillRect(0, 0, width, height);
+            
+            time += 0.003; // Скорость внутреннего плавания
+
+            orbs.forEach((orb, i) => {
+                // 1. Органичное плавание вокруг своей базовой точки (якоря)
+                let targetX = orb.baseX + Math.sin(time * 2 + i) * (width * 0.15);
+                let targetY = orb.baseY + Math.cos(time * 2.5 + i * 2) * (height * 0.15);
+
+                // 2. Отталкивание от курсора
+                if (mouse.active) {
+                    let dx = orb.x - mouse.x;
+                    let dy = orb.y - mouse.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    let maxDist = width * 0.6; // Радиус взаимодействия
+
+                    if (dist < maxDist && dist > 1) {
+                        // Чем ближе курсор, тем сильнее отталкивание (квадратичная сила)
+                        let force = Math.pow((maxDist - dist) / maxDist, 2); 
+                        
+                        orb.vx += (dx / dist) * force * 8; // Сила броска
+                        orb.vy += (dy / dist) * force * 8;
+                    }
+                }
+
+                // 3. Пружинная физика (тянет пятно обратно к целевой точке)
+                let sDx = targetX - orb.x;
+                let sDy = targetY - orb.y;
+                let springStrength = 0.015; // Жесткость пружины
+                
+                orb.vx += sDx * springStrength;
+                orb.vy += sDy * springStrength;
+
+                // 4. Трение (чтобы пятна плавно тормозили, а не летали бесконечно)
+                orb.vx *= 0.85;
+                orb.vy *= 0.85;
+
+                // Применяем скорость к позиции
+                orb.x += orb.vx;
+                orb.y += orb.vy;
+
+                // 5. Жесткий ограничитель (чтобы точно не улетали за край экрана)
+                if (orb.x < -orb.r) { orb.x = -orb.r; orb.vx *= -0.5; }
+                if (orb.x > width + orb.r) { orb.x = width + orb.r; orb.vx *= -0.5; }
+                if (orb.y < -orb.r) { orb.y = -orb.r; orb.vy *= -0.5; }
+                if (orb.y > height + orb.r) { orb.y = height + orb.r; orb.vy *= -0.5; }
+
+                // Отрисовка
+                let g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+                g.addColorStop(0, `rgba(${orb.color[0]}, ${orb.color[1]}, ${orb.color[2]}, 0.85)`);
+                g.addColorStop(1, `rgba(${orb.color[0]}, ${orb.color[1]}, ${orb.color[2]}, 0)`);
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        /* =========================================
+           ДАННЫЕ КЕЙСОВ И UI ЛОГИКА
+           ========================================= */
+        const casesData = [
+            {
+                category: "Мода",
+                title: "Авторская мастерская платьев",
+                images: [
+                    "vika.jpg", // Ваша 1-я фотка для первого поп-апа
+                    "vika1.jpg", // Ваша 2-я фотка для первого поп-апа
+                    "vika2.jpg"  // Ваша 3-я фотка для первого поп-апа
+                ],
+                niche: "Свадебные и вечерние платья ручной работы.",
+                task: "Передать эксклюзивность нарядов, сделав акцент на деталях ручной вышивки, качестве тканей и процессе создания образа.",
+                result: "Повышение лояльности аудитории и рост числа заявок на индивидуальный пошив на +40% после внедрения бэкстейдж-форматов."
+            },
+            {
+                category: "Цветы",
+                title: "Магазин «ТРАВА»",
+                images: [
+                    "trava.jpg", // Ваша 1-я фотка для второго поп-апа
+                    "trava1.jpg",  // Ваша 2-я фотка для второго поп-апа
+                    "trava2.jpg"  // Ваша 3-я фотка для второго поп-апа
+                ],
+                niche: "Бутик нишевой флористики.",
+                task: "Сфокусироваться на макросъемке редких сортов цветов, показать процесс сборки букета как искусство.",
+                result: "Продажи праздничной коллекции закрыты полностью за 4 дня до даты события."
+            },
+            {
+                category: "HoReCa",
+                title: "Ресторанный холдинг",
+                images: [
+                    "rest.jpg", // 1-я фотка для третьего поп-апа
+                    "rest1.jpg", // 2-я фотка для третьего поп-апа
+                ],
+                niche: "Сеть заведений (Birliman, Хоттабович, Зебры и др.).",
+                task: "Комплексное ведение 6 проектов (IG, VK). Разработка контент-стратегии, адаптация текстов под разный Tone of Voice, комьюнити-менеджмент и запуск промо-акций.",
+                result: "Выстроена системная коммуникация брендов, повышена активность и привлечены новые клиенты за счет рассылок и геймификации."
+            }
+        ];
+
+        const modal = document.getElementById('caseModal');
+        const modalContentBlock = document.getElementById('modalContentBlock');
+        
+        let currentCaseIndex = 0;   // Индекс открытого в данный момент кейса (0, 1 или 2)
+        let currentSlideIndex = 0;  // Индекс показываемой фотографии внутри этого кейса
+
+        function openModal(index) {
+            currentCaseIndex = index;
+            currentSlideIndex = 0; // При открытии любого кейса всегда показываем самую первую фотографию
+            
+            const data = casesData[index];
+            document.getElementById('modalCategory').innerText = data.category;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalNiche').innerText = data.niche;
+            document.getElementById('modalTask').innerText = data.task;
+            
+            // Подсветка цифр
+            let resultHtml = data.result.replace(/(\+40%|4 дня|новые клиенты)/g, '<span class="text-accentGold font-bold">$1</span>');
+            document.getElementById('modalResult').innerHTML = resultHtml;
+
+            // Запуск генерации слайдов и точек навигации
+            updateSliderImage();
+            buildSliderDots();
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContentBlock.classList.remove('scale-95');
+            modalContentBlock.classList.add('scale-100');
+            document.body.style.overflow = 'hidden'; // Запрещаем скролл основной страницы
+        }
+
+        // Обновление картинки в поп-апе с эффектом легкого красивого затухания
+        function updateSliderImage() {
+            const imgElement = document.getElementById('modalImg');
+            const currentImagesArray = casesData[currentCaseIndex].images;
+            
+            imgElement.style.opacity = '0'; // Гасим старую картинку
+            
+            setTimeout(() => {
+                imgElement.src = currentImagesArray[currentSlideIndex]; // Меняем путь к файлу
+                imgElement.style.opacity = '1'; // Плавно проявляем новую
+                updateActiveDot(); // Обновляем положение активной точки
+            }, 150);
+        }
+
+        // Автоматическое построение точек-индикаторов под фото
+        function buildSliderDots() {
+            const dotsContainer = document.getElementById('modalDots');
+            dotsContainer.innerHTML = ''; // Очищаем контейнер от старых точек
+            const currentImagesArray = casesData[currentCaseIndex].images;
+            
+            // Если в кейсе всего одна картинка — точки выводить не нужно
+            if (currentImagesArray.length <= 1) return;
+
+            currentImagesArray.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                // Стилизуем точки с помощью Tailwind классов
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 min-h-[8px] min-w-[8px] ${idx === currentSlideIndex ? 'bg-accentGold scale-125 w-4' : 'bg-white/40 hover:bg-white/70'}`;
+                dot.onclick = () => {
+                    currentSlideIndex = idx;
+                    updateSliderImage();
+                };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        // Подсвечиваем нужную точку при перелистывании
+        function updateActiveDot() {
+            const dots = document.getElementById('modalDots').children;
+            if (!dots.length) return;
+            
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlideIndex) {
+                    dots[i].className = 'w-4 h-2 rounded-full bg-accentGold transition-all duration-300 min-h-[8px]'; // Активная точка вытягивается в овал
+                } else {
+                    dots[i].className = 'w-2 h-2 rounded-full bg-white/40 hover:bg-white/70 transition-all duration-300 min-h-[8px] min-w-[8px]';
+                }
+            }
+        }
+
+        // Функция: Листать вперед
+        function nextSlide() {
+            const currentImagesArray = casesData[currentCaseIndex].images;
+            currentSlideIndex = (currentSlideIndex + 1) % currentImagesArray.length; // Переход на 0, если дошли до конца
+            updateSliderImage();
+        }
+
+        // Функция: Листать назад
+        function prevSlide() {
+            const currentImagesArray = casesData[currentCaseIndex].images;
+            currentSlideIndex = (currentSlideIndex - 1 + currentImagesArray.length) % currentImagesArray.length; // Переход в конец, если ушли меньше нуля
+            updateSliderImage();
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContentBlock.classList.remove('scale-100');
+            modalContentBlock.classList.add('scale-95');
+            document.body.style.overflow = ''; // Возвращаем скролл страницы
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Управление с клавиатуры ПК
+        window.addEventListener('keydown', (e) => {
+            if (modal.classList.contains('opacity-0')) return; // Если модалка закрыта — ничего не делаем
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Эффект хедера при скролле
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('bg-black/20', 'backdrop-blur-md', 'border-b', 'border-white/5');
+            } else {
+                header.classList.remove('bg-black/20', 'backdrop-blur-md', 'border-b', 'border-white/5');
+            }
+        });
+
+        // Мобильное меню
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const burgerLine1 = document.getElementById('burger-line-1');
+        const burgerLine2 = document.getElementById('burger-line-2');
+        const burgerLine3 = document.getElementById('burger-line-3');
+
+        let isMobileMenuOpen = false;
+
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            if (isMobileMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    mobileMenu.classList.remove('opacity-0', '-translate-y-4');
+                    mobileMenu.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+                
+                // Анимация иконки бургера
+                burgerLine1.style.transform = 'translateY(5px) rotate(45deg)';
+                burgerLine2.style.opacity = '0';
+                burgerLine3.style.transform = 'translateY(-5px) rotate(-45deg)';
+            } else {
+                mobileMenu.classList.remove('opacity-100', 'translate-y-0');
+                mobileMenu.classList.add('opacity-0', '-translate-y-4');
+                
+                // Восстановление иконки бургера
+                burgerLine1.style.transform = '';
+                burgerLine2.style.opacity = '1';
+                burgerLine3.style.transform = '';
+
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+        // Закрытие мобильного меню по клику на ссылку
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (isMobileMenuOpen) toggleMobileMenu();
+            });
+        });
+        // --- ЛОГИКА СВАЙПА (ПЕРЕТАСКИВАНИЯ) ДЛЯ ФОТО ---
+        const sliderContainer = document.getElementById('sliderContainer');
+        let startX = 0; // Тут будем хранить точку, где мышка нажалась
+        let isDragging = false; // Переключатель: зажата ли мышка сейчас
+
+        // Функция: проверяем, насколько сильно сдвинули мышку
+        function handleSwipe(start, end) {
+            const threshold = 50; // Нужно сдвинуть минимум на 50 пикселей, чтобы сработало
+            if (start - end > threshold) {
+                nextSlide(); // Свайпнули влево -> следующая фотка
+            } else if (end - start > threshold) {
+                prevSlide(); // Свайпнули вправо -> предыдущая фотка
+            }
+        }
+
+        // 1. Управление мышкой (для компьютеров)
+        // Когда кнопку мыши нажали:
+        sliderContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX; // Запомнили координату X
+        });
+
+        // Когда кнопку мыши отпустили:
+        sliderContainer.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            handleSwipe(startX, e.clientX); // Сравниваем начало и конец
+        });
+
+        // Если увели мышку за пределы картинки и отпустили там:
+        sliderContainer.addEventListener('mouseleave', () => {
+            isDragging = false; 
+        });
+
+        // 2. Управление касанием (для смартфонов)
+        // Когда палец коснулся экрана:
+        sliderContainer.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX; // Запомнили точку касания
+        });
+
+        // Когда палец убрали с экрана:
+        sliderContainer.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].clientX;
+            handleSwipe(startX, endX); // Сравниваем начало и конец
+        });
+    </script>
+</body>
+</html>
